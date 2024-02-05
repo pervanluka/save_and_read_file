@@ -9,10 +9,11 @@ import Flutter
     ) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
 
-        let binaryMessenger = window?.rootViewController as! FlutterBinaryMessenger
-        let api = DeviceFileApi()
-        DeviceFileApi.setup(binaryMessenger, api)
-        
+        let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+        let binaryMessenger = controller.binaryMessenger
+        let api = DeviceFileApiImpl()
+        DeviceFileApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 }
