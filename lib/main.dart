@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:save_content_as_txt_file/cubit/file_cubit.dart';
-import 'package:save_content_as_txt_file/cubit/file_state.dart';
-import 'package:save_content_as_txt_file/service_locator/service_locator.dart';
+import 'package:save_and_read_file/cubit/file_cubit.dart';
+import 'package:save_and_read_file/cubit/file_state.dart';
+import 'package:save_and_read_file/service_locator/service_locator.dart';
 import 'package:toastification/toastification.dart';
 
 void main() {
@@ -64,7 +64,7 @@ class _SaveFileScreenState extends State<SaveFileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Save Text as Text file'),
+        title: const Text('Save and read file'),
         centerTitle: false,
         actions: [
           IconButton(

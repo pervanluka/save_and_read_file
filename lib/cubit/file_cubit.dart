@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:save_content_as_txt_file/cubit/file_state.dart';
-import 'package:save_content_as_txt_file/device_handler/device_permission_handler.dart';
-import 'package:save_content_as_txt_file/device_handler/device_storage_handler.dart';
+import 'package:save_and_read_file/cubit/file_state.dart';
+import 'package:save_and_read_file/device_handler/device_permission_handler.dart';
+import 'package:save_and_read_file/device_handler/device_storage_handler.dart';
 
 class FileCubit extends Cubit<FileState> {
   final IDeviceStorageHandler _deviceStorageHandler;

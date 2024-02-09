@@ -1,4 +1,4 @@
-import 'package:save_content_as_txt_file/src/messages.g.dart';
+import 'package:save_and_read_file/src/messages.g.dart';
 
 abstract interface class IDeviceStorageHandler {
   Future<FileResponse> saveFile(String fileName, String content);
