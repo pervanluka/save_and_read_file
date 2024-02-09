@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           deviceStorageHandler: sl(),
           devicePermissionHandler: sl(),
         ),
-        child: const SaveFileScreen(),
+        child: const FileScreen(),
       ),
     );
   }

@@ -4,14 +4,14 @@ import 'package:save_and_read_file/cubit/file_cubit.dart';
 import 'package:save_and_read_file/cubit/file_state.dart';
 import 'package:toastification/toastification.dart';
 
-class SaveFileScreen extends StatefulWidget {
-  const SaveFileScreen({super.key});
+class FileScreen extends StatefulWidget {
+  const FileScreen({super.key});
 
   @override
-  State<SaveFileScreen> createState() => _SaveFileScreenState();
+  State<FileScreen> createState() => _FileScreenState();
 }
 
-class _SaveFileScreenState extends State<SaveFileScreen> {
+class _FileScreenState extends State<FileScreen> {
   TextEditingController fileNameController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   TextEditingController fileNameReadController = TextEditingController();
