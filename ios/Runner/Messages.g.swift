@@ -30,6 +30,10 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
+private func createConnectionError(withChannelName channelName: String) -> CustomFlutterError {
+  return CustomFlutterError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+}
+
 private func isNullish(_ value: Any?) -> Bool {
   return value is NSNull || value == nil
 }
@@ -40,44 +44,66 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct FileMessage {
-  var text: String
+struct SaveFileMessage {
+  var filename: String
   var content: String
 
-  static func fromList(_ list: [Any?]) -> FileMessage? {
-    let text = list[0] as! String
+  static func fromList(_ list: [Any?]) -> SaveFileMessage? {
+    let filename = list[0] as! String
     let content = list[1] as! String
 
-    return FileMessage(
-      text: text,
+    return SaveFileMessage(
+      filename: filename,
       content: content
     )
   }
   func toList() -> [Any?] {
     return [
-      text,
+      filename,
       content,
     ]
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct Response {
+struct ReadFileMessage {
+  var filename: String
+
+  static func fromList(_ list: [Any?]) -> ReadFileMessage? {
+    let filename = list[0] as! String
+
+    return ReadFileMessage(
+      filename: filename
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      filename
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FileResponse {
   var successful: Bool
+  var content: String? = nil
   var error: String? = nil
 
-  static func fromList(_ list: [Any?]) -> Response? {
+  static func fromList(_ list: [Any?]) -> FileResponse? {
     let successful = list[0] as! Bool
-    let error: String? = nilOrValue(list[1])
+    let content: String? = nilOrValue(list[1])
+    let error: String? = nilOrValue(list[2])
 
-    return Response(
+    return FileResponse(
       successful: successful,
+      content: content,
       error: error
     )
   }
   func toList() -> [Any?] {
     return [
       successful,
+      content,
       error,
     ]
   }
@@ -87,9 +113,11 @@ private class DeviceFileApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 128:
-      return FileMessage.fromList(self.readValue() as! [Any?])
+      return FileResponse.fromList(self.readValue() as! [Any?])
     case 129:
-      return Response.fromList(self.readValue() as! [Any?])
+      return ReadFileMessage.fromList(self.readValue() as! [Any?])
+    case 130:
+      return SaveFileMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -98,11 +126,14 @@ private class DeviceFileApiCodecReader: FlutterStandardReader {
 
 private class DeviceFileApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? FileMessage {
+    if let value = value as? FileResponse {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? Response {
+    } else if let value = value as? ReadFileMessage {
       super.writeByte(129)
+      super.writeValue(value.toList())
+    } else if let value = value as? SaveFileMessage {
+      super.writeByte(130)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -126,7 +157,8 @@ class DeviceFileApiCodec: FlutterStandardMessageCodec {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol DeviceFileApi {
-  func saveFile(msg: FileMessage, completion: @escaping (Result<Response, Error>) -> Void)
+  func saveFile(msg: SaveFileMessage, completion: @escaping (Result<FileResponse, Error>) -> Void)
+  func readFile(msg: ReadFileMessage, completion: @escaping (Result<FileResponse, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -139,7 +171,7 @@ class DeviceFileApiSetup {
     if let api = api {
       saveFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let msgArg = args[0] as! FileMessage
+        let msgArg = args[0] as! SaveFileMessage
         api.saveFile(msg: msgArg) { result in
           switch result {
           case .success(let res):
@@ -151,6 +183,91 @@ class DeviceFileApiSetup {
       }
     } else {
       saveFileChannel.setMessageHandler(nil)
+    }
+    let readFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.save_content_as_txt_file.DeviceFileApi.readFile", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      readFileChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let msgArg = args[0] as! ReadFileMessage
+        api.readFile(msg: msgArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      readFileChannel.setMessageHandler(nil)
+    }
+  }
+}
+private class FlutterFileApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 128:
+      return FileResponse.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class FlutterFileApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? FileResponse {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class FlutterFileApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return FlutterFileApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return FlutterFileApiCodecWriter(data: data)
+  }
+}
+
+class FlutterFileApiCodec: FlutterStandardMessageCodec {
+  static let shared = FlutterFileApiCodec(readerWriter: FlutterFileApiCodecReaderWriter())
+}
+
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+protocol FlutterFileApiProtocol {
+  func displayContent(response responseArg: FileResponse, completion: @escaping (Result<Void, CustomFlutterError>) -> Void)
+}
+class FlutterFileApi: FlutterFileApiProtocol {
+  private let binaryMessenger: FlutterBinaryMessenger
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    self.binaryMessenger = binaryMessenger
+  }
+  var codec: FlutterStandardMessageCodec {
+    return FlutterFileApiCodec.shared
+  }
+  func displayContent(response responseArg: FileResponse, completion: @escaping (Result<Void, CustomFlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.save_content_as_txt_file.FlutterFileApi.displayContent"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([responseArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        let error = CustomFlutterError(code: code, message: message, details: details)
+        completion(.failure(error))
+      } else {
+        completion(.success(Void()))
+      }
     }
   }
 }

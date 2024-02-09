@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		10C6AEFE32DE55E7EB708EB3 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFCEB124633B3F7C7141EE51 /* Pods_Runner.framework */; };
-		1472BDA52B713825001DE186 /* DeviceFileApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1472BDA42B713825001DE186 /* DeviceFileApi.swift */; };
+		1472BDA52B713825001DE186 /* DeviceFileApiImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1472BDA42B713825001DE186 /* DeviceFileApiImpl.swift */; };
 		14760C082B713B8300BCE0BF /* Messages.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14760C072B713B8300BCE0BF /* Messages.g.swift */; };
+		14760C0A2B7226F400BCE0BF /* CustomFlutterError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14760C092B7226F300BCE0BF /* CustomFlutterError.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -44,8 +45,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1472BDA42B713825001DE186 /* DeviceFileApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceFileApi.swift; path = ../../../../../Documents/DeviceFileApi.swift; sourceTree = "<group>"; };
+		1472BDA42B713825001DE186 /* DeviceFileApiImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceFileApiImpl.swift; path = ../../../../../Documents/DeviceFileApiImpl.swift; sourceTree = "<group>"; };
 		14760C072B713B8300BCE0BF /* Messages.g.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Messages.g.swift; sourceTree = "<group>"; };
+		14760C092B7226F300BCE0BF /* CustomFlutterError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlutterError.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -165,7 +167,8 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
-				1472BDA42B713825001DE186 /* DeviceFileApi.swift */,
+				1472BDA42B713825001DE186 /* DeviceFileApiImpl.swift */,
+				14760C092B7226F300BCE0BF /* CustomFlutterError.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -365,7 +368,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				14760C082B713B8300BCE0BF /* Messages.g.swift in Sources */,
-				1472BDA52B713825001DE186 /* DeviceFileApi.swift in Sources */,
+				1472BDA52B713825001DE186 /* DeviceFileApiImpl.swift in Sources */,
+				14760C0A2B7226F400BCE0BF /* CustomFlutterError.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);

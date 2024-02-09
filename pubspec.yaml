@@ -41,6 +41,8 @@ dependencies:
   permission_handler: ^11.2.0
   get_it: ^7.6.7
   toastification: ^1.2.0
+  logger: ^2.0.2+1
+  device_info_plus: ^9.1.2
 
 dev_dependencies:
   flutter_test:

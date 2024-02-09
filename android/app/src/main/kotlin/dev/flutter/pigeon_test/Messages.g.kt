@@ -30,6 +30,9 @@ private fun wrapError(exception: Throwable): List<Any?> {
   }
 }
 
+private fun createConnectionError(channelName: String): FlutterError {
+  return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")}
+
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
  * @property code The error code.
@@ -43,44 +46,66 @@ class FlutterError (
 ) : Throwable()
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class FileMessage (
-  val text: String,
+data class SaveFileMessage (
+  val filename: String,
   val content: String
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): FileMessage {
-      val text = list[0] as String
+    fun fromList(list: List<Any?>): SaveFileMessage {
+      val filename = list[0] as String
       val content = list[1] as String
-      return FileMessage(text, content)
+      return SaveFileMessage(filename, content)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
-      text,
+      filename,
       content,
     )
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class Response (
+data class ReadFileMessage (
+  val filename: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): ReadFileMessage {
+      val filename = list[0] as String
+      return ReadFileMessage(filename)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      filename,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class FileResponse (
   val successful: Boolean,
+  val content: String? = null,
   val error: String? = null
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): Response {
+    fun fromList(list: List<Any?>): FileResponse {
       val successful = list[0] as Boolean
-      val error = list[1] as String?
-      return Response(successful, error)
+      val content = list[1] as String?
+      val error = list[2] as String?
+      return FileResponse(successful, content, error)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
       successful,
+      content,
       error,
     )
   }
@@ -92,12 +117,17 @@ private object DeviceFileApiCodec : StandardMessageCodec() {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          FileMessage.fromList(it)
+          FileResponse.fromList(it)
         }
       }
       129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          Response.fromList(it)
+          ReadFileMessage.fromList(it)
+        }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          SaveFileMessage.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -105,12 +135,16 @@ private object DeviceFileApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is FileMessage -> {
+      is FileResponse -> {
         stream.write(128)
         writeValue(stream, value.toList())
       }
-      is Response -> {
+      is ReadFileMessage -> {
         stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      is SaveFileMessage -> {
+        stream.write(130)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -120,7 +154,8 @@ private object DeviceFileApiCodec : StandardMessageCodec() {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface DeviceFileApi {
-  fun saveFile(msg: FileMessage, callback: (Result<Response>) -> Unit)
+  fun saveFile(msg: SaveFileMessage, callback: (Result<FileResponse>) -> Unit)
+  fun readFile(msg: ReadFileMessage, callback: (Result<FileResponse>) -> Unit)
 
   companion object {
     /** The codec used by DeviceFileApi. */
@@ -135,8 +170,8 @@ interface DeviceFileApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val msgArg = args[0] as FileMessage
-            api.saveFile(msgArg) { result: Result<Response> ->
+            val msgArg = args[0] as SaveFileMessage
+            api.saveFile(msgArg) { result: Result<FileResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -150,6 +185,75 @@ interface DeviceFileApi {
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.save_content_as_txt_file.DeviceFileApi.readFile", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val msgArg = args[0] as ReadFileMessage
+            api.readFile(msgArg) { result: Result<FileResponse> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+}
+@Suppress("UNCHECKED_CAST")
+private object FlutterFileApiCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          FileResponse.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is FileResponse -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+@Suppress("UNCHECKED_CAST")
+class FlutterFileApi(private val binaryMessenger: BinaryMessenger) {
+  companion object {
+    /** The codec used by FlutterFileApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      FlutterFileApiCodec
+    }
+  }
+  fun displayContent(responseArg: FileResponse, callback: (Result<Unit>) -> Unit)
+{
+    val channelName = "dev.flutter.pigeon.save_content_as_txt_file.FlutterFileApi.displayContent"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(responseArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
     }
   }
 }

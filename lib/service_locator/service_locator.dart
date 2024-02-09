@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:save_content_as_txt_file/cubit/file_cubit.dart';
 import 'package:save_content_as_txt_file/device_handler/device_permission_handler.dart';
@@ -15,18 +16,22 @@ class ServiceLocator {
       () => DeviceFileApi(),
     );
 
+    sl.registerLazySingleton(
+      () => DeviceInfoPlugin(),
+    );
+
     // Handlers
     sl.registerFactory<IDeviceStorageHandler>(
       () => DeviceStorageHandler(deviceFileApi: sl()),
     );
     sl.registerFactory<IDevicePermissionHandler>(
-      () => DevicePermissionHandler(),
+      () => DevicePermissionHandler(deviceInfoPlugin: sl()),
     );
 
     // Cubit
     sl.registerFactory<FileCubit>(
       () => FileCubit(
-        deviceDataHandler: sl(),
+        deviceStorageHandler: sl(),
         devicePermissionHandler: sl(),
       ),
     );

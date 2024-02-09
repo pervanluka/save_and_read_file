@@ -8,22 +8,33 @@ import 'package:pigeon/pigeon.dart';
   swiftOut: 'ios/Runner/Messages.g.swift',
   swiftOptions: SwiftOptions(),
 ))
-class FileMessage {
-  final String text;
-  final String content;
-
-  FileMessage({required this.text, required this.content});
+class SaveFileMessage {
+  String filename;
+  String content;
+  SaveFileMessage(this.filename, this.content);
 }
 
-class Response {
-  final bool successful;
-  final String? error;
+class ReadFileMessage {
+  String filename;
+  ReadFileMessage(this.filename);
+}
 
-  Response({required this.successful, required this.error});
+class FileResponse {
+  bool successful;
+  String? content;
+  String? error;
+  FileResponse(this.successful, this.content, this.error);
 }
 
 @HostApi()
 abstract class DeviceFileApi {
   @async
-  Response saveFile(FileMessage msg);
+  FileResponse saveFile(SaveFileMessage msg);
+  @async
+  FileResponse readFile(ReadFileMessage msg);
+}
+
+@FlutterApi()
+abstract class FlutterFileApi {
+  void displayContent(FileResponse response);
 }

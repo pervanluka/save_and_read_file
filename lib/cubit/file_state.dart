@@ -22,14 +22,23 @@ class StoragePermissionDenied extends FileState {
   List<Object?> get props => [];
 }
 
-class FileLoaded extends FileState {
+class FileSavedSuccessfully extends FileState {
   final bool success;
 
-  FileLoaded({
-    required this.success,
-  });
+  FileSavedSuccessfully({required this.success});
+
   @override
   List<Object?> get props => [success];
+}
+
+class FileContentLoaded extends FileState {
+  final String fileName;
+  final String content;
+
+  FileContentLoaded({required this.fileName, required this.content});
+
+  @override
+  List<Object?> get props => [fileName, content];
 }
 
 class FileFailed extends FileState {
