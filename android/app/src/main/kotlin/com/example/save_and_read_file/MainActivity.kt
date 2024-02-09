@@ -1,4 +1,4 @@
-package com.example.save_content_as_txt_file
+package com.example.save_and_read_file
 
 import DeviceFileApiImpl
 import io.flutter.embedding.android.FlutterActivity

@@ -166,7 +166,7 @@ interface DeviceFileApi {
     @Suppress("UNCHECKED_CAST")
     fun setUp(binaryMessenger: BinaryMessenger, api: DeviceFileApi?) {
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.save_content_as_txt_file.DeviceFileApi.saveFile", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.save_and_read_file.DeviceFileApi.saveFile", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -186,7 +186,7 @@ interface DeviceFileApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.save_content_as_txt_file.DeviceFileApi.readFile", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.save_and_read_file.DeviceFileApi.readFile", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -242,7 +242,7 @@ class FlutterFileApi(private val binaryMessenger: BinaryMessenger) {
   }
   fun displayContent(responseArg: FileResponse, callback: (Result<Unit>) -> Unit)
 {
-    val channelName = "dev.flutter.pigeon.save_content_as_txt_file.FlutterFileApi.displayContent"
+    val channelName = "dev.flutter.pigeon.save_and_read_file.FlutterFileApi.displayContent"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(responseArg)) {
       if (it is List<*>) {

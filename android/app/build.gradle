@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.save_content_as_txt_file"
+    namespace "com.example.save_and_read_file"
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
